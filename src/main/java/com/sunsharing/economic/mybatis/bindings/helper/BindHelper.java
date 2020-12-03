@@ -1,9 +1,10 @@
 package com.sunsharing.economic.mybatis.bindings.helper;
 
 
-import com.sunsharing.economic.mybatis.bindings.annotation.BindEntity;
+import com.sunsharing.economic.mybatis.bindings.annotation.Binding;
 import com.sunsharing.economic.mybatis.bindings.annotation.Bindings;
 import com.sunsharing.economic.mybatis.bindings.exception.BindingException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
@@ -12,15 +13,15 @@ import org.apache.ibatis.scripting.xmltags.DynamicSqlSource;
 import org.apache.ibatis.scripting.xmltags.SqlNode;
 import org.apache.ibatis.scripting.xmltags.VarDeclSqlNode;
 import org.apache.ibatis.session.Configuration;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.annotation.AnnotatedElementUtils;
-import org.springframework.core.type.filter.AssignableTypeFilter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -43,16 +44,11 @@ public class BindHelper {
      */
     private final Map<String, Boolean> skips = new HashMap<>();
 
-    /**
-     * 初始化
-     */
-    private boolean initialized = false;
-
 
     public void processBinds(Class<?> mapper, Configuration configuration) {
         if (mapper.isAnnotationPresent(Bindings.class)) {
             Annotation[] annotations = mapper.getAnnotationsByType(Bindings.class);
-            List<BindEntity> bindEntities = resolveAnnotations(annotations);
+            List<Binding> bindEntities = resolveAnnotations(annotations);
             if (bindEntities.isEmpty()) {
                 processAnnotationMethod(mapper, configuration, defaultUtils);
             } else {
@@ -77,7 +73,7 @@ public class BindHelper {
         for (Method method : methods) {
             if (method.isAnnotationPresent(Bindings.class)) {
                 Annotation[] annotations = method.getAnnotationsByType(Bindings.class);
-                List<BindEntity> methodAnnotations = resolveAnnotations(annotations);
+                List<Binding> methodAnnotations = resolveAnnotations(annotations);
                 List<VarDeclSqlNode> methodSqlNode = new ArrayList<>();
                 if (methodAnnotations.isEmpty()) {
                     methodSqlNode.addAll(this.defaultUtils);
@@ -145,7 +141,7 @@ public class BindHelper {
      * @param annotations   annotations
      * @return              bindEntity
      */
-    private List<BindEntity> resolveAnnotations(Annotation[] annotations) {
+    private List<Binding> resolveAnnotations(Annotation[] annotations) {
         AnnotatedElement annotatedElement = AnnotatedElementUtils.forAnnotations(annotations);
         Bindings[] binds = annotatedElement.getAnnotationsByType(Bindings.class);
         return Stream.of(binds[0].value()).collect(Collectors.toList());
@@ -155,39 +151,10 @@ public class BindHelper {
     /**
      * 初始化自定义utils
      *
-     * @param basePackages  包路径
+     * @param utils  utils
      */
-    public void initCustomize(String...basePackages) {
-        if (!initialized) {
-            ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
-            provider.addIncludeFilter(new AssignableTypeFilter(Utils.class));
-            Set<BeanDefinition> components = new HashSet<>();
-
-            for (String basePackage : basePackages) {
-                components.addAll(provider.findCandidateComponents(basePackage));
-            }
-
-            List<Utils> utils = new ArrayList<>();
-            for (BeanDefinition component : components) {
-                try {
-                    Class<Utils> clazz = (Class<Utils>) Class.forName(component.getBeanClassName());
-                    if (clazz.isEnum() || clazz.isInterface()) {
-                        continue;
-                    }
-
-                    utils.add(clazz.newInstance());
-                    initialized = true;
-                } catch (ClassNotFoundException e) {
-                    throw new BindingException(String.format("在 %s 中未找到 %s 类", Arrays.toString(basePackages), component.getBeanClassName()));
-                } catch (IllegalAccessException e) {
-                    throw new BindingException(String.format("类 %s 强转 Utils 出错", component.getBeanClassName()), e);
-                } catch (InstantiationException e) {
-                    throw new BindingException(String.format("创建 %s 对象出错", component.getBeanClassName()), e);
-                }
-            }
-
-            this.defaultUtils.addAll(convertDefaultContext(utils));
-        }
+    public void initCustomize(List<Utils> utils) {
+        this.defaultUtils.addAll(convertDefaultContext(utils));
     }
 
 
@@ -239,11 +206,11 @@ public class BindHelper {
      * @param bindEntities  注解列表
      * @return              list
      */
-    private List<VarDeclSqlNode> convertContext(List<BindEntity> bindEntities) {
+    private List<VarDeclSqlNode> convertContext(List<Binding> bindEntities) {
         List<VarDeclSqlNode> result = new ArrayList<>();
-        for (BindEntity bindEntity : bindEntities) {
-            covertContext(result, StringUtils.substringAfterLast(bindEntity.type().getCanonicalName(), "."),
-                    bindEntity.type().getCanonicalName(), bindEntity.alias());
+        for (Binding binding : bindEntities) {
+            covertContext(result, StringUtils.substringAfterLast(binding.type().getCanonicalName(), "."),
+                    binding.type().getCanonicalName(), binding.alias());
         }
 
         return result;

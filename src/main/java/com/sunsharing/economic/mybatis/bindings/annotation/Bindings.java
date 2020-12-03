@@ -16,6 +16,6 @@ public @interface Bindings {
      *
      * @return  array
      */
-    BindEntity[] value();
+    Binding[] value();
 
 }
