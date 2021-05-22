@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.sunsharing.economic.mybatis.bindings.mapper.BookMapper">
+<mapper namespace="com.ddmcc.mybatis.bindings.mapper.BookMapper">
 
-    <sql id="BASE_COLUMN">
-        b.book_id bookId, b.book_name bookName, b.publication_date publicationDate,
-        b.author, b.press, b.introduction, b.price, b.pages, b.binding, b.isbn, b.image
-    </sql>
-
-
-    <select id="select" resultType="com.sunsharing.economic.mybatis.bindings.entity.bo.Book"
-            parameterType="com.sunsharing.economic.mybatis.bindings.entity.bo.Book">
+    <select id="select" resultType="com.ddmcc.mybatis.bindings.entity.Book"
+            parameterType="com.ddmcc.mybatis.bindings.entity.Book">
         SELECT * FROM book
         WHERE 1 = 1
-        <if test="v.isNotBlank(bookName)">
+        <if test="v.subtract(type)">
             AND book_name like CONCAT('%', #{bookName}, '%')
         </if>
     </select>

@@ -1,6 +1,7 @@
-package com.sunsharing.economic.mybatis.bindings.mapper;
+package com.ddmcc.mybatis.bindings;
 
-import com.sunsharing.economic.mybatis.bindings.entity.bo.Book;
+import com.ddmcc.mybatis.bindings.entity.Book;
+import com.ddmcc.mybatis.bindings.mapper.BookMapper;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,8 @@ class BookMapperTest {
     @Test
     void select() {
         Book book = new Book();
-        book.setBookName("wqewqewq3213");
+        book.setType(2);
+        book.setBookName("111");
         bookMapper.select(book);
     }
 }

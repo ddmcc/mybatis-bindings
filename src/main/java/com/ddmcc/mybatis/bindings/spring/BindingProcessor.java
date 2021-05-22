@@ -1,7 +1,7 @@
-package com.sunsharing.economic.mybatis.bindings.spring;
+package com.ddmcc.mybatis.bindings.spring;
 
-import com.sunsharing.economic.mybatis.bindings.helper.BindHelper;
-import com.sunsharing.economic.mybatis.bindings.helper.Utils;
+import com.ddmcc.mybatis.bindings.helper.BindHelper;
+import com.ddmcc.mybatis.bindings.helper.Utils;
 
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;

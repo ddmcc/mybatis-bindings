@@ -1,13 +1,12 @@
-package com.sunsharing.economic.mybatis.bindings.helper;
+package com.ddmcc.mybatis.bindings.helper;
 
 
-import com.sunsharing.economic.mybatis.bindings.annotation.Binding;
-import com.sunsharing.economic.mybatis.bindings.annotation.Bindings;
-import com.sunsharing.economic.mybatis.bindings.exception.BindingException;
+import com.ddmcc.mybatis.bindings.annotation.Binding;
+import com.ddmcc.mybatis.bindings.annotation.Bindings;
+import com.ddmcc.mybatis.bindings.exception.BindingException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.scripting.xmltags.DynamicSqlSource;
 import org.apache.ibatis.scripting.xmltags.SqlNode;
@@ -165,9 +164,8 @@ public class BindHelper {
      * @return      DynamicSqlSource
      */
     private DynamicSqlSource getSqlSource(MappedStatement ms) {
-        SqlSource sqlSource;
-        if ((sqlSource = ms.getSqlSource()) instanceof DynamicSqlSource) {
-            return (DynamicSqlSource) sqlSource;
+        if (isDynamicSqlSource(ms)) {
+            return (DynamicSqlSource) ms.getSqlSource();
         }
 
         throw new BindingException(String.format("获取接口 %s sql错误，应该是动态sql", ms.getId()));

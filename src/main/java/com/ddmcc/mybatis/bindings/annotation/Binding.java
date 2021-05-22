@@ -1,4 +1,4 @@
-package com.sunsharing.economic.mybatis.bindings.annotation;
+package com.ddmcc.mybatis.bindings.annotation;
 
 import java.lang.annotation.*;
 

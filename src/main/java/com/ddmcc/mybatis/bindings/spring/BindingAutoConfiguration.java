@@ -1,4 +1,4 @@
-package com.sunsharing.economic.mybatis.bindings.spring;
+package com.ddmcc.mybatis.bindings.spring;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;

@@ -1,4 +1,4 @@
-package com.sunsharing.economic.mybatis.bindings.entity.bo;
+package com.ddmcc.mybatis.bindings.entity;
 
 
 import java.math.BigDecimal;
@@ -11,6 +11,8 @@ public class Book {
     private String bookName;
 
     private String author;
+
+    private Integer type;
 
     private String press;
 
@@ -134,5 +136,14 @@ public class Book {
 
     public void setScore(BigDecimal score) {
         this.score = score;
+    }
+
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 }

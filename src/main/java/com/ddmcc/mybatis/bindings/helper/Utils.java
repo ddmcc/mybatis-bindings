@@ -1,4 +1,4 @@
-package com.sunsharing.economic.mybatis.bindings.helper;
+package com.ddmcc.mybatis.bindings.helper;
 
 /**
  * @author jiangrz
