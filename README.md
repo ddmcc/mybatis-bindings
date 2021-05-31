@@ -19,17 +19,8 @@
 
 ### 怎么用？
 
-##### 1， **pom 中引入**
 
-```xml
-<dependency>
-   <groupId>com.ddmcc</groupId>
-   <artifactId>mybatis-bindings</artifactId>
-   <version>2.0</version>
-</dependency>
-```
-
-##### 2， **在要绑定对象的mapper接口或方法中新增 `Bindings` 注解**
+##### 1， **在要绑定对象的mapper接口或方法中新增 `Bindings` 注解**
 
 ```java
 @Bindings({
