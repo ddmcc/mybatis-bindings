@@ -1,4 +1,4 @@
-package com.sunsharing.economic.mybatis.bindings.exception;
+package com.yiautos.mybatis.bindings.exception;
 
 /**
  * @author jiangrz

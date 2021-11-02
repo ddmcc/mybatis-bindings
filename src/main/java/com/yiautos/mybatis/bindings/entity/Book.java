@@ -1,4 +1,4 @@
-package com.sunsharing.economic.mybatis.bindings.entity.bo;
+package com.yiautos.mybatis.bindings.entity;
 
 
 import java.math.BigDecimal;
@@ -134,5 +134,25 @@ public class Book {
 
     public void setScore(BigDecimal score) {
         this.score = score;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Book{" +
+            "bookId=" + bookId +
+            ", bookName='" + bookName + '\'' +
+            ", author='" + author + '\'' +
+            ", press='" + press + '\'' +
+            ", publicationDate='" + publicationDate + '\'' +
+            ", introduction='" + introduction + '\'' +
+            ", price=" + price +
+            ", pages='" + pages + '\'' +
+            ", binding='" + binding + '\'' +
+            ", isbn='" + isbn + '\'' +
+            ", image='" + image + '\'' +
+            ", count=" + count +
+            ", score=" + score +
+            '}';
     }
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yiautos.mybatis.bindings.mapper.BookMapper">
+
+    <select id="select" resultType="com.yiautos.mybatis.bindings.entity.Book">
+
+        SELECT *
+        FROM book
+        <where>
+            <if test="v.isNotBlank(book.bookName)">
+                AND book_name like CONCAT('%', #{book.bookName}, '%')
+            </if>
+            AND book_id = #{a.APPROVALING}
+            AND book_id = #{APPROVALING}
+            AND book_name like CONCAT('%', #{b.TEST_NAME}, '%')
+
+
+        </where>
+    </select>
+</mapper>

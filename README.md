@@ -48,7 +48,7 @@
 
 - 在接口中申明：该接口下所有方法都会绑定上
 - 在方法中申明：只绑定该方法
-- 未申明@Binding，即@Bindings({})。这种情况下会将 **com.sunsharing.economic.mybatis.bindings.helper.Utils** 接口所有实现类对象绑定上去
+- 未申明@Binding，即@Bindings({})。这种情况下会将 **Utils** 接口所有实现类对象绑定上去
 
 
 ### 其它

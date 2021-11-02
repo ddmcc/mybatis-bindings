@@ -1,4 +1,4 @@
-package com.sunsharing.economic.mybatis.bindings.spring;
+package com.yiautos.mybatis.bindings.spring;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -13,8 +13,6 @@ import org.springframework.context.event.ContextRefreshedEvent;
 @Configuration
 @AutoConfigureAfter(SqlSessionFactory.class)
 public class BindingAutoConfiguration implements ApplicationListener<ContextRefreshedEvent> {
-
-
 
     private volatile boolean initialized = false;
 

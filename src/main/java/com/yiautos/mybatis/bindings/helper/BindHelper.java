@@ -1,11 +1,16 @@
-package com.sunsharing.economic.mybatis.bindings.helper;
+package com.yiautos.mybatis.bindings.helper;
 
 
-import com.sunsharing.economic.mybatis.bindings.annotation.Binding;
-import com.sunsharing.economic.mybatis.bindings.annotation.Bindings;
-import com.sunsharing.economic.mybatis.bindings.exception.BindingException;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.yiautos.mybatis.bindings.annotation.Binding;
+import com.yiautos.mybatis.bindings.annotation.Bindings;
+import com.yiautos.mybatis.bindings.entity.BaseBinding;
+import com.yiautos.mybatis.bindings.entity.EnumBinding;
+import com.yiautos.mybatis.bindings.entity.ExpressionBinding;
+import com.yiautos.mybatis.bindings.entity.StaticVarBinding;
+import com.yiautos.mybatis.bindings.entity.UtilClassBinding;
+import com.yiautos.mybatis.bindings.exception.BindingException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.reflection.SystemMetaObject;
@@ -34,12 +39,6 @@ import java.util.stream.Stream;
 public class BindHelper {
 
     /**
-     * 默认的所有工具 继承Utils接口而来
-     * @see Utils
-     */
-    private final List<VarDeclSqlNode> defaultUtils = new ArrayList<>();
-
-    /**
      * 已解析或非动态sql
      */
     private final Map<String, Boolean> skips = new HashMap<>();
@@ -49,10 +48,10 @@ public class BindHelper {
         if (mapper.isAnnotationPresent(Bindings.class)) {
             Annotation[] annotations = mapper.getAnnotationsByType(Bindings.class);
             List<Binding> bindEntities = resolveAnnotations(annotations);
-            if (bindEntities.isEmpty()) {
-                processAnnotationMethod(mapper, configuration, defaultUtils);
-            } else {
+            if (!bindEntities.isEmpty()) {
                 processAnnotationMethod(mapper, configuration, convertContext(bindEntities));
+            } else {
+                throw new BindingException("找不到 @Binding 节点");
             }
 
         } else {
@@ -75,9 +74,7 @@ public class BindHelper {
                 Annotation[] annotations = method.getAnnotationsByType(Bindings.class);
                 List<Binding> methodAnnotations = resolveAnnotations(annotations);
                 List<VarDeclSqlNode> methodSqlNode = new ArrayList<>();
-                if (methodAnnotations.isEmpty()) {
-                    methodSqlNode.addAll(this.defaultUtils);
-                } else {
+                if (!methodAnnotations.isEmpty()) {
                     methodSqlNode.addAll(convertContext(methodAnnotations));
                 }
 
@@ -85,9 +82,9 @@ public class BindHelper {
                     methodSqlNode.addAll(list);
                 }
 
-                setSqlContents(configuration, mapperClass.getCanonicalName() + "." + method.getName(), distinct(methodSqlNode));
+                setSqlContents(configuration, mapperClass.getCanonicalName() + StringPool.DOT + method.getName(), distinct(methodSqlNode));
             } else if (list != null) {
-                setSqlContents(configuration, mapperClass.getCanonicalName() + "." + method.getName(), list);
+                setSqlContents(configuration, mapperClass.getCanonicalName() + StringPool.DOT + method.getName(), list);
             }
         }
 
@@ -149,16 +146,6 @@ public class BindHelper {
 
 
     /**
-     * 初始化自定义utils
-     *
-     * @param utils  utils
-     */
-    public void initCustomize(List<Utils> utils) {
-        this.defaultUtils.addAll(convertDefaultContext(utils));
-    }
-
-
-    /**
      * 原始动态sql
      *
      * @param ms    ms
@@ -209,33 +196,23 @@ public class BindHelper {
     private List<VarDeclSqlNode> convertContext(List<Binding> bindEntities) {
         List<VarDeclSqlNode> result = new ArrayList<>();
         for (Binding binding : bindEntities) {
-            covertContext(result, StringUtils.substringAfterLast(binding.type().getCanonicalName(), "."),
-                    binding.type().getCanonicalName(), binding.alias());
+            if (binding.type().isEnum()) {
+                EnumBinding enumVar = new EnumBinding(binding.alias(), binding.type());
+                result.addAll(0, enumVar.buildVarDeclSqlNode());
+            } else if (binding.varType() == BaseBinding.VarType.UTIL){
+                UtilClassBinding utilVar = new UtilClassBinding(binding.alias(), binding.type());
+                result.addAll(0, utilVar.buildVarDeclSqlNode());
+            } else if (binding.varType() == BaseBinding.VarType.STATIC) {
+                StaticVarBinding staticVar = new StaticVarBinding(binding.alias(), binding.type(), binding.varName());
+                result.addAll(0, staticVar.buildVarDeclSqlNode());
+            } else if (binding.varType() == BaseBinding.VarType.EXPRESSION) {
+                ExpressionBinding expressionBinding = new ExpressionBinding(binding.alias(), binding.expression());
+                result.addAll(0, expressionBinding.buildVarDeclSqlNode());
+            }
+
         }
 
         return result;
-    }
-
-    /**
-     * 实现类列表转上下文sql节点，空注解时会绑定上
-     *
-     * @param utils     utils
-     * @return          list
-     */
-    private List<VarDeclSqlNode> convertDefaultContext(List<Utils> utils) {
-        List<VarDeclSqlNode> result = new ArrayList<>();
-        for (Utils util : utils) {
-            covertContext(result, util.type().getName(), util.type().getCanonicalName(), util.alias());
-        }
-
-        return result;
-    }
-
-    private void covertContext(List<VarDeclSqlNode> result, String keyword, String canonicalName, String alias) {
-        result.add(new VarDeclSqlNode(keyword, String.format("new %s()", canonicalName)));
-        if (StringUtils.isNotBlank(alias) && !keyword.equals(alias)) {
-            result.add(new VarDeclSqlNode(alias, String.format("new %s()", canonicalName)));
-        }
     }
 
     /**
