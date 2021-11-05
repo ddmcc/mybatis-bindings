@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.yiautos.mybatis.bindings.mapper.BookMapper">
+<mapper namespace="com.ddmcc.mybatis.bindings.mapper.BookMapper">
 
-    <select id="select" resultType="com.yiautos.mybatis.bindings.entity.Book">
+    <select id="select" resultType="com.ddmcc.mybatis.bindings.entity.Book">
 
         SELECT *
         FROM book
@@ -11,10 +11,15 @@
                 AND book_name like CONCAT('%', #{book.bookName}, '%')
             </if>
             AND book_id = #{a.APPROVALING}
-            AND book_id = #{APPROVALING}
             AND book_name like CONCAT('%', #{b.TEST_NAME}, '%')
 
 
         </where>
+    </select>
+    <select id="get" resultType="com.ddmcc.mybatis.bindings.entity.Book">
+        SELECT * FROM book
+        <if test="ccccc.isNotBlank('')">
+            WHERE book_name like CONCAT('%', '1', '%')
+        </if>
     </select>
 </mapper>
