@@ -25,9 +25,7 @@
 
 ```xml
 <dependency>
-    <groupId>com.yiautos</groupId>
-    <artifactId>yiautos-mybatis-bindings</artifactId>
-    <version>1.1.0</version>
+    
 </dependency>
 ```
 
@@ -110,9 +108,9 @@ xml： #{VAR_NAME} or #{alias.VAR_NAME}
 
 ```java
     @Bindings({
-        @Binding(alias = "e", varType = BaseBinding.VarType.EXPRESSION, expression = "@com.yiautos.mybatis.bindings.helper.ObjectCache@TEST_NAME"),
-        @Binding(alias = "c", varType = BaseBinding.VarType.EXPRESSION, expression = "new com.yiautos.mybatis.bindings.model.User('数据', 2)"),
-        @Binding(alias = "d", varType = BaseBinding.VarType.EXPRESSION, expression = "@com.yiautos.mybatis.bindings.model.enums.DingStatusEnum@APPROVALING.getCode()")
+        @Binding(alias = "e", varType = BaseBinding.VarType.EXPRESSION, expression = "@com.ddmcc.mybatis.bindings.helper.ObjectCache@TEST_NAME"),
+        @Binding(alias = "c", varType = BaseBinding.VarType.EXPRESSION, expression = "new com.ddmcc.mybatis.bindings.model.User('数据', 2)"),
+        @Binding(alias = "d", varType = BaseBinding.VarType.EXPRESSION, expression = "@com.ddmcc.mybatis.bindings.model.enums.DingStatusEnum@APPROVALING.getCode()")
     })
 ```
 
